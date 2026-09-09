@@ -1,0 +1,20 @@
+#!/bin/sh
+
+unset LD_LIBRARY_PATH LD_PRELOAD
+
+configured_hostname=
+if [ -r "@TERMUX_PREFIX@/etc/termux/hostname" ]; then
+	IFS= read -r configured_hostname < "@TERMUX_PREFIX@/etc/termux/hostname"
+fi
+
+if [ -n "$configured_hostname" ]; then
+	set -- $(for argument do
+		if [ "$argument" = "$configured_hostname" ]; then
+			echo ::1
+		else
+			echo "$argument"
+		fi
+	done)
+fi
+
+PATH=/system/bin exec /system/bin/ping6 "$@"
