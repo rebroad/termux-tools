@@ -1,0 +1,37 @@
+#!/bin/sh
+
+tty_path=$(tty) || exit 1
+if [ ! -c "$tty_path" ]; then
+	echo "mesg: standard input is not a terminal" >&2
+	exit 1
+fi
+
+case "$tty_path" in
+	/dev/pts/[0-9]*) ;;
+	*) echo "mesg: unsupported terminal: $tty_path" >&2; exit 1 ;;
+esac
+
+message_directory="@TERMUX_PREFIX@/var/run/mesg"
+message_file="$message_directory/${tty_path#/dev/}"
+
+if [ "$#" -eq 0 ]; then
+	mode=$(stat -c %a "$tty_path") || exit 1
+	group_bits=${mode#?}
+	group_bits=${group_bits%?}
+	case "$group_bits" in
+		2|3|6|7) echo "is y" ;;
+		*) [ -r "$message_file" ] && [ "$(cat "$message_file")" = y ] && echo "is y" || echo "is n" ;;
+	esac
+	exit 0
+fi
+
+if [ "$#" -ne 1 ]; then
+	echo "usage: mesg [y|n]" >&2
+	exit 2
+fi
+
+case "$1" in
+	y) mkdir -p "${message_file%/*}" && printf 'y\n' > "$message_file" || exit 1 ;;
+	n) rm -f "$message_file" || exit 1 ;;
+	*) echo "usage: mesg [y|n]" >&2; exit 2 ;;
+esac

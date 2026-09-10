@@ -17,7 +17,7 @@
 # <https://www.gnu.org/licenses/>.
 
 # shell scripts:
-bin_SCRIPTS = chsh dalvikvm login pkg su termux-backup			\
+bin_SCRIPTS = chsh dalvikvm login mesg pkg su termux-backup		\
 termux-change-repo termux-fix-shebang termux-info termux-open		\
 termux-open-url termux-reload-settings termux-reset termux-restore	\
 termux-setup-package-manager termux-setup-storage termux-wake-lock	\
@@ -64,6 +64,7 @@ install-exec-hook:
 $(eval $(call tool-rule,chsh))
 $(eval $(call tool-rule,dalvikvm))
 $(eval $(call tool-rule,login))
+$(eval $(call tool-rule,mesg))
 $(eval $(call tool-rule,pkg))
 $(eval $(call tool-rule,su))
 $(eval $(call tool-rule,termux-backup))
